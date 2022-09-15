@@ -6,10 +6,11 @@ public class LightPass : ScriptablePass
     private Mesh mesh;
     private Material material;
     private const int MAX_LIGHT_COUNT = 16;
-    
+
     ShaderTagId shaderTagId = new ShaderTagId("LightPass");
     private static int _VisitableLightColorId = Shader.PropertyToID("_VisitableLightColor");
     private static int _VisitableLightDirectId = Shader.PropertyToID("_VisitableLightDirect");
+    private static int _NowLightCountId = Shader.PropertyToID("_NowLightCount");
     Vector4[] VisitableLightColor = new Vector4[MAX_LIGHT_COUNT];
     Vector4[] VisitableLightDirect = new Vector4[MAX_LIGHT_COUNT];
 
@@ -57,21 +58,32 @@ public class LightPass : ScriptablePass
     {
     }
 
-    void GetLightData()
+
+    public void SetLightData(ref RenderingData renderingData, CommandBuffer commandBuffer)
     {
-        
+        var visitableLight = renderingData.CullResults.visibleLights;
+        var count = Mathf.Min(visitableLight.Length, MAX_LIGHT_COUNT);
+        for (int i = 0; i < count; i++)
+        {
+            VisitableLightColor[i] = visitableLight[i].finalColor;
+            var dir = visitableLight[i].localToWorldMatrix.GetColumn(2);
+            dir.x = -dir.x;
+            dir.y = -dir.y;
+            dir.z = -dir.z;
+            VisitableLightDirect[i] = dir;
+        }
+
+        commandBuffer.SetGlobalVectorArray(_VisitableLightColorId, VisitableLightColor);
+        commandBuffer.SetGlobalInt(_NowLightCountId, count);
+        commandBuffer.SetGlobalVectorArray(_VisitableLightDirectId, VisitableLightDirect);
     }
-    
-    public void SetLightData()
-    {
-    }
-    
-    public override void Execute(ScriptableRenderContext context,ref RenderingData renderingData)
+
+    public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
     {
         CommandBuffer cmd = CommandBufferPool.Get();
         cmd.name = "LightPass";
         cmd.SetRenderTarget(BuiltinRenderTextureType.CameraTarget);
-
+        SetLightData(ref renderingData, cmd);
         cmd.DrawMesh(mesh, Matrix4x4.identity, material);
         context.ExecuteCommandBuffer(cmd);
         cmd.Release();

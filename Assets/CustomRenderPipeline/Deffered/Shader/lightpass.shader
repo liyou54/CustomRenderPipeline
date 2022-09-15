@@ -21,6 +21,7 @@
             #pragma vertex vert
             #pragma fragment farg
             #include "./Lib/gbuffer.hlsl"
+            #include "./Lib/gBufferLight.hlsl"
 
             struct i2v
             {
@@ -54,7 +55,7 @@
             half4 farg(v2f1 i):SV_Target
             {
                 half4 res= tex2D(_GT1, i.uv.xy);
-                return res;
+                return _NowLightCount == 2;
             }
             ENDCG
         }
