@@ -27,15 +27,12 @@ public class GBufferPass : ScriptablePass
                 gbufferID[i] = gbuffers[i];
             isInit = true;
         }
-
-
     }
 
     public void SetGbuffer()
     {
-        
     }
-    
+
     public override void AfterRender()
     {
         // if (gdepth.width != Screen.width || gdepth.height != Screen.height)
@@ -56,24 +53,35 @@ public class GBufferPass : ScriptablePass
         // }
     }
 
-
-
+    public void SetData(Camera camera, CommandBuffer cmd)
+    {
+        Matrix4x4 viewMatrix = camera.worldToCameraMatrix;
+        Matrix4x4 projMatrix = GL.GetGPUProjectionMatrix(camera.projectionMatrix, false);
+        Matrix4x4 vpMatrix = projMatrix * viewMatrix;
+        Matrix4x4 vpMatrixInv = vpMatrix.inverse;
+        cmd.SetGlobalMatrix("_vpMatrix", vpMatrix);
+        cmd.SetGlobalMatrix("_vpMatrixInv", vpMatrixInv);
+    }
 
     public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
     {
         CommandBuffer cmd = CommandBufferPool.Get();
+        cmd.name = "gbuffer";
+
         cmd.ClearRenderTarget(true, true, Color.black);
         cmd.SetRenderTarget(gbufferID, gdepth);
         cmd.ClearRenderTarget(true, true, Color.black);
-        cmd.name = "gbuffer";
-        context.SetupCameraProperties(renderingData.CameraData);
+
         DrawingSettings ds = new DrawingSettings();
         ds.SetShaderPassName(0, shaderTagId);
         ds.sortingSettings = new SortingSettings() {criteria = SortingCriteria.CommonOpaque};
         FilteringSettings fs = new FilteringSettings(RenderQueueRange.opaque);
         cmd.SetGlobalTexture("_GDepth", gdepth);
-        for(int i=0; i<4; i++) 
-            cmd.SetGlobalTexture("_GT"+i, gbuffers[i]);
+        for (int i = 0; i < 4; i++)
+            cmd.SetGlobalTexture("_GT" + i, gbuffers[i]);
+
+        SetData(renderingData.CameraData, cmd);
+
         context.ExecuteCommandBuffer(cmd);
         cmd.Release();
         context.DrawRenderers(renderingData.CullResults, ref ds, ref fs);

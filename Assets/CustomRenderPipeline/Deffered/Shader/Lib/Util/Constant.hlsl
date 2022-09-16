@@ -1,0 +1,4 @@
+#ifndef _CONSTANT_HLSL
+#define _CONSTANT_HLSL
+#define PI 3.14159265358979323846
+#endif

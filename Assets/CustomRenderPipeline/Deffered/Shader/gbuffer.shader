@@ -2,7 +2,11 @@
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
+        _MainTex ("_MainTex", 2D) = "white" {}
+        _NormalTex ("_NormalTex", 2D) = "bump" {}
+        _RoughnessTex ("_RoughnessTex", 2D) = "white" {}
+        _MetalTex ("_MetalTex", 2D) = "white" {}
+         _OcclusionTex ("Occlusion Map", 2D) = "white" {}
     }
     SubShader
     {
