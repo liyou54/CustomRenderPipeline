@@ -18,10 +18,11 @@
             }
             Cull Off ZWrite Off ZTest Always
             CGPROGRAM
+                        #include "./Lib/gBufferLight.hlsl"
+
             #pragma vertex vert
             #pragma fragment farg
             
-            #include "./Lib/gBufferLight.hlsl"
 
 
 
