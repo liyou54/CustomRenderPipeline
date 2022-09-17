@@ -82,8 +82,8 @@ public class LightPass : ScriptablePass
     {
         CommandBuffer cmd = CommandBufferPool.Get();
         cmd.name = "LightPass";
-        cmd.SetRenderTarget(BuiltinRenderTextureType.CameraTarget);
         SetLightData(ref renderingData, cmd);
+        cmd.SetRenderTarget(BuiltinRenderTextureType.CameraTarget);
         cmd.DrawMesh(mesh, Matrix4x4.identity, material);
         context.ExecuteCommandBuffer(cmd);
         cmd.Release();

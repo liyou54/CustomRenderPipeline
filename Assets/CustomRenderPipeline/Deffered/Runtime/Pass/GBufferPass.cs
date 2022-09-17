@@ -29,28 +29,32 @@ public class GBufferPass : ScriptablePass
         }
     }
 
-    public void SetGbuffer()
+    public RenderTargetIdentifier[] GetGBufferId()
     {
+        return gbufferID;
     }
 
     public override void AfterRender()
     {
-        // if (gdepth.width != Screen.width || gdepth.height != Screen.height)
-        // {
-        //     gdepth.Release();
-        //     for (int i = 0; i < 4; i++)
-        //         gbuffers[i].Release();
-        //     gdepth = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.Depth,
-        //         RenderTextureReadWrite.Linear);
-        //     gbuffers[0] = new RenderTexture(Screen.width, Screen.height, 0, RenderTextureFormat.ARGB32,
-        //         RenderTextureReadWrite.Linear);
-        //     gbuffers[1] = new RenderTexture(Screen.width, Screen.height, 0, RenderTextureFormat.ARGB2101010,
-        //         RenderTextureReadWrite.Linear);
-        //     gbuffers[2] = new RenderTexture(Screen.width, Screen.height, 0, RenderTextureFormat.ARGB64,
-        //         RenderTextureReadWrite.Linear);
-        //     gbuffers[3] = new RenderTexture(Screen.width, Screen.height, 0, RenderTextureFormat.ARGBFloat,
-        //         RenderTextureReadWrite.Linear);
-        // }
+        if (gdepth.width != Screen.width || gdepth.height != Screen.height)
+        {
+            gdepth.Release();
+            for (int i = 0; i < 4; i++)
+                gbuffers[i].Release();
+
+            gdepth = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.Depth,
+                RenderTextureReadWrite.Linear);
+            gbuffers[0] = new RenderTexture(Screen.width, Screen.height, 0, RenderTextureFormat.ARGB32,
+                RenderTextureReadWrite.Linear);
+            gbuffers[1] = new RenderTexture(Screen.width, Screen.height, 0, RenderTextureFormat.ARGB2101010,
+                RenderTextureReadWrite.Linear);
+            gbuffers[2] = new RenderTexture(Screen.width, Screen.height, 0, RenderTextureFormat.ARGB64,
+                RenderTextureReadWrite.Linear);
+            gbuffers[3] = new RenderTexture(Screen.width, Screen.height, 0, RenderTextureFormat.ARGBFloat,
+                RenderTextureReadWrite.Linear);
+            for (int i = 0; i < 4; i++)
+                gbufferID[i] = gbuffers[i];
+        }
     }
 
     public void SetData(Camera camera, CommandBuffer cmd)

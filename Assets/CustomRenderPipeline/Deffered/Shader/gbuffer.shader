@@ -21,7 +21,10 @@
             {
                 "LightMode"="gbuffer"
             }
+            Cull back Ztest On Zwrite on
+
             CGPROGRAM
+            
             #include "./Lib/gbuffer.hlsl"
             #pragma vertex GBufferVert
             #pragma fragment GBufferFarg

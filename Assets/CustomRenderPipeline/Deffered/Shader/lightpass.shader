@@ -16,17 +16,13 @@
             {
                 "LightMode"="LightPass"
             }
-            Cull Off ZWrite Off ZTest Always
+            Cull front Ztest Always Zwrite on
+
             CGPROGRAM
-                        #include "./Lib/gBufferLight.hlsl"
+            #include "./Lib/gBufferLight.hlsl"
 
             #pragma vertex vert
             #pragma fragment farg
-            
-
-
-
-
             ENDCG
         }
     }

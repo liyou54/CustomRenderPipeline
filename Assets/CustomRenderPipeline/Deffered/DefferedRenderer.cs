@@ -11,6 +11,6 @@
         LightPass = new LightPass();
         AddPass(gbufferPass);
         AddPass(LightPass);
-        //AddPass(SkyBoxPass);
+        AddPass(SkyBoxPass);
     }
 }

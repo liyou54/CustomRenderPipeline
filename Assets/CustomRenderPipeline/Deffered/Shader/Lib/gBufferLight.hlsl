@@ -35,13 +35,13 @@ v2f vert(i2v i)
 }
 
 
-half4 farg(v2f i):SV_Target
+half4 farg(v2f i,out float depthOut :SV_Depth):SV_Target
 {
     
     GBufferData gbuffer = DecodeGBufferData(i.uv);
     PosData pos = InitPosData(i.uv,gbuffer.Depth,gbuffer.NormalWs);
-    float3 radiance = _VisitableLightColor[0].rgb;
-    float3 color = PBR(pos, gbuffer, radiance);
+    float3 color = PBR(pos, gbuffer);
+    depthOut = gbuffer.Depth;
     return half4(color, 1);
 }
 
